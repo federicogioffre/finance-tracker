@@ -83,9 +83,16 @@ async function loadPage(name) {
 // ── Dashboard ─────────────────────────────────────────────────────────────────
 
 async function loadDashboard() {
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, "0");
+  const lastDay = new Date(y, now.getMonth() + 1, 0).getDate();
+  const startDate = `${y}-${m}-01`;
+  const endDate   = `${y}-${m}-${String(lastDay).padStart(2, "0")}`;
+
   const [accounts, summary, recent] = await Promise.all([
     get("/accounts/"),
-    get("/transactions/summary"),
+    get(`/transactions/summary?start_date=${startDate}T00:00:00&end_date=${endDate}T23:59:59`),
     get("/transactions?limit=5"),
   ]);
 
@@ -101,6 +108,7 @@ async function loadDashboard() {
       }).join("")
     : '<p style="color:var(--muted)">Nessun conto. Clicca &ldquo;+ Nuovo conto&rdquo; per iniziare.</p>';
 
+  $("#sum-period").textContent = now.toLocaleDateString("it-IT", { month: "long", year: "numeric" });
   $("#sum-income").textContent = fmt(summary.total_income);
   $("#sum-expenses").textContent = fmt(summary.total_expenses);
   const net = parseFloat(summary.net);
