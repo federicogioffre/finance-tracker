@@ -47,7 +47,10 @@
 
     <!-- DASHBOARD -->
     <div id="page-dashboard" class="page">
-      <h2>Dashboard</h2>
+      <div class="page-header">
+        <h2>Dashboard</h2>
+        <button id="open-account-modal">+ Nuovo conto</button>
+      </div>
       <section class="card-grid" id="accounts-grid"></section>
 
       <section class="summary-section">
@@ -81,7 +84,10 @@
     <div id="page-transactions" class="page hidden">
       <div class="page-header">
         <h2>Transazioni</h2>
-        <button id="open-tx-modal">+ Aggiungi</button>
+        <div class="btn-group">
+          <button id="open-category-modal" class="secondary">+ Categoria</button>
+          <button id="open-tx-modal">+ Transazione</button>
+        </div>
       </div>
 
       <div class="filters">
@@ -106,6 +112,48 @@
         <button id="open-budget-modal">+ Aggiungi</button>
       </div>
       <div id="budget-list"></div>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD ACCOUNT -->
+  <div id="account-modal" class="modal hidden">
+    <div class="modal-box">
+      <h3>Nuovo conto</h3>
+      <form id="account-form">
+        <input type="text" id="account-name" placeholder="Nome conto" required />
+        <select id="account-type">
+          <option value="checking">Conto corrente</option>
+          <option value="savings">Conto risparmio</option>
+          <option value="credit">Carta di credito</option>
+          <option value="cash">Contanti</option>
+          <option value="investment">Investimenti</option>
+        </select>
+        <input type="number" id="account-balance" placeholder="Saldo iniziale (€)" step="0.01" value="0" required />
+        <div class="modal-actions">
+          <button type="button" id="close-account-modal" class="secondary">Annulla</button>
+          <button type="submit">Salva</button>
+        </div>
+        <p class="error" id="account-error"></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD CATEGORY -->
+  <div id="category-modal" class="modal hidden">
+    <div class="modal-box">
+      <h3>Nuova categoria</h3>
+      <form id="category-form">
+        <input type="text" id="category-name" placeholder="Nome categoria" required />
+        <select id="category-type">
+          <option value="expense">Uscita</option>
+          <option value="income">Entrata</option>
+        </select>
+        <div class="modal-actions">
+          <button type="button" id="close-category-modal" class="secondary">Annulla</button>
+          <button type="submit">Salva</button>
+        </div>
+        <p class="error" id="category-error"></p>
+      </form>
     </div>
   </div>
 

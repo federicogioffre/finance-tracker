@@ -20,8 +20,6 @@ async function api(method, path, body = null) {
 
 const get = (p) => api("GET", p);
 const post = (p, b) => api("POST", p, b);
-const patch = (p, b) => api("PATCH", p, b);
-const del = (p) => api("DELETE", p);
 
 // ── Auth ─────────────────────────────────────────────────────────────────────
 
@@ -54,10 +52,7 @@ const show = (id) => document.getElementById(id).classList.remove("hidden");
 const hide = (id) => document.getElementById(id).classList.add("hidden");
 
 function fmt(amount) {
-  return new Intl.NumberFormat("it-IT", {
-    style: "currency",
-    currency: "EUR",
-  }).format(amount);
+  return new Intl.NumberFormat("it-IT", { style: "currency", currency: "EUR" }).format(amount);
 }
 
 function fmtDate(iso) {
@@ -94,22 +89,18 @@ async function loadDashboard() {
     get("/transactions?limit=5"),
   ]);
 
-  // Account cards
   const grid = $("#accounts-grid");
   grid.innerHTML = accounts.length
-    ? accounts
-        .map((a) => {
-          const bal = parseFloat(a.balance);
-          return `<div class="account-card">
+    ? accounts.map((a) => {
+        const bal = parseFloat(a.balance);
+        return `<div class="account-card">
           <div class="name">${a.name}</div>
           <div class="type">${a.account_type}</div>
           <div class="balance ${bal >= 0 ? "positive" : "negative"}">${fmt(bal)}</div>
         </div>`;
-        })
-        .join("")
-    : '<p style="color:var(--muted)">Nessun conto. Aggiungine uno dalla pagina Transazioni.</p>';
+      }).join("")
+    : '<p style="color:var(--muted)">Nessun conto. Clicca &ldquo;+ Nuovo conto&rdquo; per iniziare.</p>';
 
-  // Summary
   $("#sum-income").textContent = fmt(summary.total_income);
   $("#sum-expenses").textContent = fmt(summary.total_expenses);
   const net = parseFloat(summary.net);
@@ -117,19 +108,16 @@ async function loadDashboard() {
   netEl.textContent = fmt(net);
   netEl.style.color = net >= 0 ? "var(--income)" : "var(--expense)";
 
-  // Recent transactions
   const tbody = $("#recent-body");
   tbody.innerHTML = recent.length
-    ? recent
-        .map((tx) => {
-          const amt = parseFloat(tx.amount);
-          return `<tr>
+    ? recent.map((tx) => {
+        const amt = parseFloat(tx.amount);
+        return `<tr>
           <td>${fmtDate(tx.date)}</td>
           <td>${tx.description || "—"}</td>
           <td class="${amt >= 0 ? "amount-income" : "amount-expense"}">${fmt(Math.abs(amt))}</td>
         </tr>`;
-        })
-        .join("")
+      }).join("")
     : '<tr><td colspan="3" style="color:var(--muted);text-align:center">Nessuna transazione</td></tr>';
 }
 
@@ -144,9 +132,7 @@ async function loadTransactions() {
     get("/categories"),
   ]);
 
-  // Populate filter dropdown
-  const filterSel = $("#filter-account");
-  filterSel.innerHTML =
+  $("#filter-account").innerHTML =
     '<option value="">Tutti i conti</option>' +
     allAccounts.map((a) => `<option value="${a.id}">${a.name}</option>`).join("");
 
@@ -166,18 +152,16 @@ async function renderTransactions() {
 
   const tbody = $("#tx-body");
   tbody.innerHTML = txs.length
-    ? txs
-        .map((tx) => {
-          const amt = parseFloat(tx.amount);
-          return `<tr>
+    ? txs.map((tx) => {
+        const amt = parseFloat(tx.amount);
+        return `<tr>
           <td>${fmtDate(tx.date)}</td>
           <td>${tx.description || "—"}</td>
           <td>${tx.category_id ? catMap[tx.category_id] || "—" : "—"}</td>
           <td>${accountMap[tx.account_id] || "—"}</td>
           <td class="${amt >= 0 ? "amount-income" : "amount-expense"}">${fmt(Math.abs(amt))}</td>
         </tr>`;
-        })
-        .join("")
+      }).join("")
     : '<tr><td colspan="5" style="color:var(--muted);text-align:center">Nessuna transazione</td></tr>';
 }
 
@@ -191,34 +175,92 @@ async function loadBudgets() {
 
   const list = $("#budget-list");
   if (!status.length) {
-    list.innerHTML =
-      '<p style="color:var(--muted)">Nessun budget impostato per questo mese.</p>';
+    list.innerHTML = '<p style="color:var(--muted)">Nessun budget impostato per questo mese.</p>';
     return;
   }
 
-  list.innerHTML = status
-    .map((b) => {
-      const pct = Math.min(b.percent_used, 100);
-      const cls = b.over_budget ? "over" : b.percent_used >= 80 ? "warning" : "";
-      return `<div class="budget-item">
-        <div class="budget-header">
-          <span class="budget-name">${b.category_name}</span>
-          <span class="budget-amounts">${fmt(b.spent)} / ${fmt(b.budget)}</span>
-        </div>
-        <div class="progress-bar">
-          <div class="progress-fill ${cls}" style="width:${pct}%"></div>
-        </div>
-        ${b.over_budget ? `<div class="budget-alert">Budget superato di ${fmt(Math.abs(b.remaining))}</div>` : ""}
-        ${!b.over_budget && b.percent_used >= 80 ? `<div class="budget-alert" style="color:var(--warning)">Attenzione: ${b.percent_used}% utilizzato</div>` : ""}
-      </div>`;
-    })
-    .join("");
+  list.innerHTML = status.map((b) => {
+    const pct = Math.min(b.percent_used, 100);
+    const cls = b.over_budget ? "over" : b.percent_used >= 80 ? "warning" : "";
+    return `<div class="budget-item">
+      <div class="budget-header">
+        <span class="budget-name">${b.category_name}</span>
+        <span class="budget-amounts">${fmt(b.spent)} / ${fmt(b.budget)}</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill ${cls}" style="width:${pct}%"></div>
+      </div>
+      ${b.over_budget ? `<div class="budget-alert">Budget superato di ${fmt(Math.abs(b.remaining))}</div>` : ""}
+      ${!b.over_budget && b.percent_used >= 80 ? `<div class="budget-alert" style="color:var(--warning)">Attenzione: ${b.percent_used}% utilizzato</div>` : ""}
+    </div>`;
+  }).join("");
+}
+
+// ── Modal: Add Account ────────────────────────────────────────────────────────
+
+function openAccountModal() {
+  $("#account-form").reset();
+  $("#account-error").textContent = "";
+  show("account-modal");
+}
+
+async function submitAccount(e) {
+  e.preventDefault();
+  $("#account-error").textContent = "";
+  try {
+    await post("/accounts/", {
+      name: $("#account-name").value,
+      account_type: $("#account-type").value,
+      balance: parseFloat($("#account-balance").value),
+    });
+    hide("account-modal");
+    await loadDashboard();
+  } catch (err) {
+    $("#account-error").textContent = err.message;
+  }
+}
+
+// ── Modal: Add Category ───────────────────────────────────────────────────────
+
+function openCategoryModal() {
+  $("#category-form").reset();
+  $("#category-error").textContent = "";
+  show("category-modal");
+}
+
+async function submitCategory(e) {
+  e.preventDefault();
+  $("#category-error").textContent = "";
+  try {
+    await post("/categories", {
+      name: $("#category-name").value,
+      category_type: $("#category-type").value,
+    });
+    hide("category-modal");
+    // Refresh the cached lists so the new category appears immediately in the tx modal
+    [allAccounts, allCategories] = await Promise.all([
+      get("/accounts/"),
+      get("/categories"),
+    ]);
+  } catch (err) {
+    $("#category-error").textContent = err.message;
+  }
 }
 
 // ── Modal: Add Transaction ────────────────────────────────────────────────────
 
-function openTxModal() {
-  // Populate selects
+async function openTxModal() {
+  // Always fetch fresh data so newly created accounts/categories appear
+  [allAccounts, allCategories] = await Promise.all([
+    get("/accounts/"),
+    get("/categories"),
+  ]);
+
+  if (!allAccounts.length) {
+    alert("Devi prima creare almeno un conto dalla Dashboard.");
+    return;
+  }
+
   $("#tx-account").innerHTML = allAccounts
     .map((a) => `<option value="${a.id}">${a.name}</option>`)
     .join("");
@@ -227,6 +269,13 @@ function openTxModal() {
     allCategories.map((c) => `<option value="${c.id}">${c.name}</option>`).join("");
   $("#tx-error").textContent = "";
   $("#tx-form").reset();
+  // Re-populate after reset clears the selects
+  $("#tx-account").innerHTML = allAccounts
+    .map((a) => `<option value="${a.id}">${a.name}</option>`)
+    .join("");
+  $("#tx-category").innerHTML =
+    '<option value="">Nessuna categoria</option>' +
+    allCategories.map((c) => `<option value="${c.id}">${c.name}</option>`).join("");
   show("tx-modal");
 }
 
@@ -245,7 +294,8 @@ async function submitTransaction(e) {
   try {
     await post("/transactions", body);
     hide("tx-modal");
-    await renderTransactions();
+    if (currentPage === "transactions") await loadTransactions();
+    else await loadDashboard();
   } catch (err) {
     $("#tx-error").textContent = err.message;
   }
@@ -255,15 +305,16 @@ async function submitTransaction(e) {
 
 async function openBudgetModal() {
   const cats = await get("/categories");
+  if (!cats.length) {
+    alert("Devi prima creare almeno una categoria dalla pagina Transazioni.");
+    return;
+  }
+  const now = new Date();
   $("#budget-category").innerHTML = cats
     .map((c) => `<option value="${c.id}">${c.name}</option>`)
     .join("");
-  const now = new Date();
-  $("#budget-year").value = now.getFullYear();
-  $("#budget-month").value = now.getMonth() + 1;
   $("#budget-error").textContent = "";
   $("#budget-form").reset();
-  // re-set year/month after reset
   $("#budget-year").value = now.getFullYear();
   $("#budget-month").value = now.getMonth() + 1;
   show("budget-modal");
@@ -340,6 +391,22 @@ function init() {
 
   // Logout
   $("#logout-btn").addEventListener("click", logout);
+
+  // Account modal
+  $("#open-account-modal").addEventListener("click", openAccountModal);
+  $("#close-account-modal").addEventListener("click", () => hide("account-modal"));
+  $("#account-form").addEventListener("submit", submitAccount);
+  $("#account-modal").addEventListener("click", (e) => {
+    if (e.target === $("#account-modal")) hide("account-modal");
+  });
+
+  // Category modal
+  $("#open-category-modal").addEventListener("click", openCategoryModal);
+  $("#close-category-modal").addEventListener("click", () => hide("category-modal"));
+  $("#category-form").addEventListener("submit", submitCategory);
+  $("#category-modal").addEventListener("click", (e) => {
+    if (e.target === $("#category-modal")) hide("category-modal");
+  });
 
   // Transaction modal
   $("#open-tx-modal").addEventListener("click", openTxModal);

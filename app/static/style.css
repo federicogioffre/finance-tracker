@@ -80,6 +80,7 @@ nav {
 .page h2 { margin-bottom: 1.5rem; font-size: 1.4rem; }
 .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
 .page-header h2 { margin-bottom: 0; }
+.btn-group { display: flex; gap: .6rem; }
 
 /* ── ACCOUNT CARDS ── */
 .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
