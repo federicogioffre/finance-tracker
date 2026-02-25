@@ -1,14 +1,14 @@
 """
 Parser for Fineco bank Excel exports.
 
-Fineco's Excel layout:
-  - Rows 1–N:  account metadata (skipped)
-  - One row:   column headers ("Data operazione", "Entrate", "Uscite", ...)
-  - Remaining: transaction data
-  - Last rows: footer totals (skipped — no valid date)
+Actual column names (row 13 in the file):
+  Data_Operazione, Data_Valuta, Entrate, Uscite,
+  Descrizione, Descrizione_Completa, Stato
 
-Amounts use Italian notation: "1.234,56" → 1234.56
-Dates use DD/MM/YYYY.
+- Dates are ISO datetime objects: 2026-02-25 00:00:00
+- Uscite amounts already carry a minus sign: -5.95
+- Entrate amounts are positive: 1234.56
+- Thousands separator may use dot, decimal uses comma: 1.234,56
 """
 
 from datetime import datetime
@@ -17,19 +17,22 @@ from decimal import Decimal, InvalidOperation
 import openpyxl
 
 
-# Column names as they appear in Fineco exports (case-insensitive match)
-_COL_DATE = "data operazione"
+_COL_DATE = "data_operazione"
 _COL_INCOME = "entrate"
 _COL_EXPENSE = "uscite"
 _COL_DESC = "descrizione"
-_COL_DESC_FULL = "descrizione completa"
+_COL_DESC_FULL = "descrizione_completa"
 
 
-def _parse_italian_decimal(value) -> Decimal | None:
-    """Convert '1.234,56' or '1234,56' or 1234.56 to Decimal."""
-    if value is None or str(value).strip() in ("", "-"):
+def _parse_amount(value) -> Decimal | None:
+    """Parse amount (Italian or English format), strip sign, return absolute Decimal or None."""
+    if value is None or str(value).strip() in ("", "-", "0", "0.0"):
         return None
-    s = str(value).strip().replace(".", "").replace(",", ".")
+    s = str(value).strip().lstrip("-")
+    if "," in s:
+        # Italian format: 1.234,56 — dot is thousands sep, comma is decimal sep
+        s = s.replace(".", "").replace(",", ".")
+    # else: English/standard format — dot is decimal sep, use as-is
     try:
         d = Decimal(s)
         return d if d > 0 else None
@@ -43,7 +46,7 @@ def _parse_date(value) -> datetime | None:
     if isinstance(value, datetime):
         return value
     s = str(value).strip()
-    for fmt in ("%d/%m/%Y", "%Y-%m-%d", "%d-%m-%Y"):
+    for fmt in ("%Y-%m-%d %H:%M:%S", "%d/%m/%Y", "%Y-%m-%d", "%d-%m-%Y"):
         try:
             return datetime.strptime(s, fmt)
         except ValueError:
@@ -55,15 +58,13 @@ def parse_fineco_excel(file_bytes: bytes) -> list[dict]:
     """
     Parse a Fineco Excel export and return a list of dicts:
       {date, amount, transaction_type, description}
-
-    Raises ValueError with a descriptive message if the format is unrecognised.
     """
     import io
 
     wb = openpyxl.load_workbook(io.BytesIO(file_bytes), data_only=True)
     ws = wb.active
 
-    # Find the header row (contains "Data operazione")
+    # Find the header row
     header_row_idx = None
     col_map: dict[str, int] = {}
 
@@ -77,48 +78,38 @@ def parse_fineco_excel(file_bytes: bytes) -> list[dict]:
     if header_row_idx is None:
         raise ValueError(
             "Intestazione non trovata. "
-            "Assicurati di esportare il file direttamente da Fineco (Conto > Movimenti > Esporta)."
+            "Assicurati di esportare il file da Fineco: "
+            "Conto > Movimenti > seleziona il periodo > Esporta."
         )
-
-    required = [_COL_DATE, _COL_INCOME, _COL_EXPENSE, _COL_DESC]
-    missing = [c for c in required if c not in col_map]
-    if missing:
-        raise ValueError(f"Colonne mancanti nel file: {', '.join(missing)}")
 
     transactions = []
     for row in ws.iter_rows(min_row=header_row_idx + 1, values_only=True):
-        date_val = row[col_map[_COL_DATE]]
-        date = _parse_date(date_val)
+        date = _parse_date(row[col_map[_COL_DATE]])
         if date is None:
-            continue  # skip footer / empty rows
+            continue
 
-        income = _parse_italian_decimal(row[col_map[_COL_INCOME]])
-        expense = _parse_italian_decimal(row[col_map[_COL_EXPENSE]])
+        income = _parse_amount(row[col_map[_COL_INCOME]])
+        expense = _parse_amount(row[col_map[_COL_EXPENSE]])
 
         if income is None and expense is None:
-            continue  # skip rows with no amount
+            continue
 
-        # Prefer full description if available
         desc_col = _COL_DESC_FULL if _COL_DESC_FULL in col_map else _COL_DESC
         description = str(row[col_map[desc_col]] or "").strip() or None
 
         if income is not None:
-            transactions.append(
-                {
-                    "date": date,
-                    "amount": income,
-                    "transaction_type": "income",
-                    "description": description,
-                }
-            )
+            transactions.append({
+                "date": date,
+                "amount": income,
+                "transaction_type": "income",
+                "description": description,
+            })
         else:
-            transactions.append(
-                {
-                    "date": date,
-                    "amount": expense,
-                    "transaction_type": "expense",
-                    "description": description,
-                }
-            )
+            transactions.append({
+                "date": date,
+                "amount": expense,
+                "transaction_type": "expense",
+                "description": description,
+            })
 
     return transactions

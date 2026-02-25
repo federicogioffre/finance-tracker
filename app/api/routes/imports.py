@@ -1,3 +1,6 @@
+import io
+
+import openpyxl
 from fastapi import APIRouter, Depends, HTTPException, UploadFile
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
@@ -34,6 +37,23 @@ class ImportConfirmRequest(BaseModel):
 
 class ImportConfirmResponse(BaseModel):
     imported: int
+
+
+@router.post("/inspect")
+async def inspect_file(
+    file: UploadFile,
+    current_user: User = Depends(get_current_user),
+):
+    """Return the first 15 rows of the uploaded file (values only) for debugging."""
+    content = await file.read()
+    wb = openpyxl.load_workbook(io.BytesIO(content), data_only=True)
+    ws = wb.active
+    rows = []
+    for i, row in enumerate(ws.iter_rows(values_only=True)):
+        rows.append([str(c) if c is not None else "" for c in row])
+        if i >= 14:
+            break
+    return {"sheet": ws.title, "rows": rows}
 
 
 @router.post("/preview", response_model=ImportPreviewResponse)
