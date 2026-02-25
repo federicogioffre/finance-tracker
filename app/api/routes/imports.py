@@ -1,4 +1,5 @@
 import io
+from datetime import datetime
 
 import openpyxl
 from fastapi import APIRouter, Depends, HTTPException, UploadFile
@@ -119,7 +120,7 @@ def confirm_import(
             amount=amount,
             transaction_type=row.transaction_type,
             description=row.description,
-            date=row.date,
+            date=datetime.strptime(row.date, "%Y-%m-%d"),
         )
         db.add(tx)
         account.balance = float(account.balance) + amount
