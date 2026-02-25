@@ -42,6 +42,7 @@
         <button class="nav-btn" data-page="transactions">Transazioni</button>
         <button class="nav-btn" data-page="budgets">Budget</button>
       </div>
+      <button id="open-import-modal" class="btn-import">&#8593; Importa</button>
       <button id="logout-btn">Esci</button>
     </nav>
 
@@ -197,6 +198,44 @@
         </div>
         <p class="error" id="budget-error"></p>
       </form>
+    </div>
+  </div>
+
+  <!-- MODAL: IMPORT FINECO -->
+  <div id="import-modal" class="modal hidden">
+    <div class="modal-box modal-wide">
+      <h3>Importa movimenti Fineco</h3>
+
+      <!-- Step 1: upload -->
+      <div id="import-step-1">
+        <p class="import-hint">Esporta il file da <strong>Fineco &rarr; Conto &rarr; Movimenti &rarr; Esporta in Excel</strong>, poi caricalo qui.</p>
+        <select id="import-account" required></select>
+        <label class="file-label">
+          <input type="file" id="import-file" accept=".xlsx,.xls" />
+          <span id="file-name-display">Scegli file Excel&hellip;</span>
+        </label>
+        <div class="modal-actions">
+          <button type="button" id="close-import-modal" class="secondary">Annulla</button>
+          <button type="button" id="import-preview-btn">Anteprima</button>
+        </div>
+        <p class="error" id="import-error"></p>
+      </div>
+
+      <!-- Step 2: preview -->
+      <div id="import-step-2" class="hidden">
+        <p id="import-summary" class="import-summary"></p>
+        <div class="import-preview-scroll">
+          <table id="import-preview-table">
+            <thead><tr><th>Data</th><th>Descrizione</th><th>Tipo</th><th>Importo</th></tr></thead>
+            <tbody id="import-preview-body"></tbody>
+          </table>
+        </div>
+        <div class="modal-actions">
+          <button type="button" id="import-back-btn" class="secondary">Indietro</button>
+          <button type="button" id="import-confirm-btn">Importa tutto</button>
+        </div>
+        <p class="error" id="import-confirm-error"></p>
+      </div>
     </div>
   </div>
 

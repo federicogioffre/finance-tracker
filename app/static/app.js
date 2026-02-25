@@ -350,6 +350,99 @@ async function submitBudget(e) {
   }
 }
 
+// ── Import Fineco ─────────────────────────────────────────────────────────────
+
+let importPreviewRows = [];
+
+async function openImportModal() {
+  const accounts = await get("/accounts/");
+  if (!accounts.length) {
+    alert("Crea prima almeno un conto dalla Dashboard.");
+    return;
+  }
+  $("#import-account").innerHTML = accounts
+    .map((a) => `<option value="${a.id}">${a.name}</option>`)
+    .join("");
+  $("#import-file").value = "";
+  $("#file-name-display").textContent = "Scegli file Excel\u2026";
+  $("#import-error").textContent = "";
+  hide("import-step-2");
+  show("import-step-1");
+  importPreviewRows = [];
+  show("import-modal");
+}
+
+async function previewImport() {
+  const file = $("#import-file").files[0];
+  if (!file) {
+    $("#import-error").textContent = "Seleziona un file Excel.";
+    return;
+  }
+  $("#import-error").textContent = "";
+  $("#import-preview-btn").textContent = "Caricamento\u2026";
+  $("#import-preview-btn").disabled = true;
+
+  try {
+    const form = new FormData();
+    form.append("file", file);
+    const token = localStorage.getItem("token");
+    const res = await fetch("/import/preview", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      body: form,
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || "Errore durante l'anteprima");
+
+    importPreviewRows = data.rows;
+
+    $("#import-summary").innerHTML =
+      `<strong>${data.rows.length}</strong> movimenti trovati &mdash; ` +
+      `Entrate: <span class="amount-income">${fmt(data.total_income)}</span> &nbsp; ` +
+      `Uscite: <span class="amount-expense">${fmt(data.total_expenses)}</span>`;
+
+    const tbody = $("#import-preview-body");
+    tbody.innerHTML = data.rows.map((r) =>
+      `<tr>
+        <td>${r.date}</td>
+        <td>${r.description || "—"}</td>
+        <td>${r.transaction_type === "income" ? "Entrata" : "Uscita"}</td>
+        <td class="${r.transaction_type === "income" ? "amount-income" : "amount-expense"}">${fmt(r.amount)}</td>
+      </tr>`
+    ).join("");
+
+    hide("import-step-1");
+    show("import-step-2");
+  } catch (err) {
+    $("#import-error").textContent = err.message;
+  } finally {
+    $("#import-preview-btn").textContent = "Anteprima";
+    $("#import-preview-btn").disabled = false;
+  }
+}
+
+async function confirmImport() {
+  $("#import-confirm-error").textContent = "";
+  $("#import-confirm-btn").textContent = "Importazione\u2026";
+  $("#import-confirm-btn").disabled = true;
+
+  try {
+    const result = await post("/import/confirm", {
+      account_id: parseInt($("#import-account").value),
+      rows: importPreviewRows,
+    });
+    hide("import-modal");
+    alert(`Importati ${result.imported} movimenti con successo.`);
+    if (currentPage === "transactions") await loadTransactions();
+    else await loadDashboard();
+  } catch (err) {
+    $("#import-confirm-error").textContent = err.message;
+  } finally {
+    $("#import-confirm-btn").textContent = "Importa tutto";
+    $("#import-confirm-btn").disabled = false;
+  }
+}
+
 // ── Boot ──────────────────────────────────────────────────────────────────────
 
 function init() {
@@ -436,6 +529,23 @@ function init() {
   $("#budget-modal").addEventListener("click", (e) => {
     if (e.target === $("#budget-modal")) hide("budget-modal");
   });
+
+  // Import modal
+  $("#open-import-modal").addEventListener("click", openImportModal);
+  $("#close-import-modal").addEventListener("click", () => hide("import-modal"));
+  $("#import-modal").addEventListener("click", (e) => {
+    if (e.target === $("#import-modal")) hide("import-modal");
+  });
+  $("#import-file").addEventListener("change", (e) => {
+    const f = e.target.files[0];
+    $("#file-name-display").textContent = f ? f.name : "Scegli file Excel\u2026";
+  });
+  $("#import-preview-btn").addEventListener("click", previewImport);
+  $("#import-back-btn").addEventListener("click", () => {
+    hide("import-step-2");
+    show("import-step-1");
+  });
+  $("#import-confirm-btn").addEventListener("click", confirmImport);
 
   // Transaction filters
   $("#filter-account").addEventListener("change", renderTransactions);

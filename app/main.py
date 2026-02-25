@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
-from app.api.routes import accounts, auth, budgets, transactions, users
+from app.api.routes import accounts, auth, budgets, imports, transactions, users
 from app.core.config import settings
 
 
@@ -25,6 +25,7 @@ app.include_router(users.router)
 app.include_router(accounts.router)
 app.include_router(transactions.router)
 app.include_router(budgets.router)
+app.include_router(imports.router)
 
 
 @app.get("/health", tags=["health"])

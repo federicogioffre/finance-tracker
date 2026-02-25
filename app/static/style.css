@@ -155,6 +155,26 @@ tr:hover td { background: var(--bg); }
 .row { display: flex; gap: .8rem; }
 .row input { flex: 1; }
 
+/* ── IMPORT ── */
+.modal-wide { max-width: 680px; }
+.import-hint { font-size: .88rem; color: var(--muted); line-height: 1.5; margin-bottom: .4rem; }
+.import-summary { font-size: .92rem; margin-bottom: .8rem; }
+.file-label {
+  display: flex; align-items: center; gap: .8rem; padding: .65rem .8rem;
+  border: 1px dashed var(--border); border-radius: 6px; cursor: pointer;
+  color: var(--muted); font-size: .9rem;
+}
+.file-label:hover { border-color: var(--primary); color: var(--primary); }
+.file-label input[type=file] { display: none; }
+#file-name-display { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.import-preview-scroll { max-height: 320px; overflow-y: auto; margin-bottom: .8rem; border: 1px solid var(--border); border-radius: var(--radius); }
+.import-preview-scroll table { border: none; border-radius: 0; }
+.btn-import {
+  padding: .45rem .9rem; background: none; border: 1px solid var(--primary);
+  border-radius: 6px; cursor: pointer; font-size: .9rem; color: var(--primary);
+}
+.btn-import:hover { background: var(--primary); color: #fff; }
+
 /* ── RESPONSIVE ── */
 @media (max-width: 600px) {
   .summary-cards { grid-template-columns: 1fr; }
