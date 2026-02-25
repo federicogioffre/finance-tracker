@@ -287,6 +287,7 @@ async function openTxModal() {
   $("#tx-category").innerHTML =
     '<option value="">Nessuna categoria</option>' +
     allCategories.map((c) => `<option value="${c.id}">${c.name}</option>`).join("");
+  $("#tx-date").value = new Date().toISOString().slice(0, 10);
   show("tx-modal");
 }
 
@@ -298,6 +299,7 @@ async function submitTransaction(e) {
     transaction_type: $("#tx-type").value,
     amount: parseFloat($("#tx-amount").value),
     description: $("#tx-description").value || null,
+    date: $("#tx-date").value,
   };
   const catVal = $("#tx-category").value;
   if (catVal) body.category_id = parseInt(catVal);
