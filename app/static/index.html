@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Finance Tracker</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <!-- AUTH SCREEN -->
+  <div id="auth-screen" class="screen">
+    <div class="auth-box">
+      <h1>Finance Tracker</h1>
+      <div class="tabs">
+        <button class="tab active" data-tab="login">Accedi</button>
+        <button class="tab" data-tab="register">Registrati</button>
+      </div>
+
+      <form id="login-form" class="auth-form">
+        <input type="email" id="login-email" placeholder="Email" required />
+        <input type="password" id="login-password" placeholder="Password" required />
+        <button type="submit">Accedi</button>
+        <p class="error" id="login-error"></p>
+      </form>
+
+      <form id="register-form" class="auth-form hidden">
+        <input type="text" id="reg-name" placeholder="Nome completo" required />
+        <input type="email" id="reg-email" placeholder="Email" required />
+        <input type="password" id="reg-password" placeholder="Password" required />
+        <button type="submit">Registrati</button>
+        <p class="error" id="reg-error"></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- APP SCREEN -->
+  <div id="app-screen" class="screen hidden">
+    <nav>
+      <span class="nav-brand">Finance Tracker</span>
+      <div class="nav-links">
+        <button class="nav-btn active" data-page="dashboard">Dashboard</button>
+        <button class="nav-btn" data-page="transactions">Transazioni</button>
+        <button class="nav-btn" data-page="budgets">Budget</button>
+      </div>
+      <button id="logout-btn">Esci</button>
+    </nav>
+
+    <!-- DASHBOARD -->
+    <div id="page-dashboard" class="page">
+      <h2>Dashboard</h2>
+      <section class="card-grid" id="accounts-grid"></section>
+
+      <section class="summary-section">
+        <h3>Riepilogo del mese</h3>
+        <div class="summary-cards">
+          <div class="summary-card income">
+            <span class="label">Entrate</span>
+            <span class="amount" id="sum-income">—</span>
+          </div>
+          <div class="summary-card expense">
+            <span class="label">Uscite</span>
+            <span class="amount" id="sum-expenses">—</span>
+          </div>
+          <div class="summary-card net">
+            <span class="label">Saldo netto</span>
+            <span class="amount" id="sum-net">—</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="recent-section">
+        <h3>Ultime transazioni</h3>
+        <table id="recent-table">
+          <thead><tr><th>Data</th><th>Descrizione</th><th>Importo</th></tr></thead>
+          <tbody id="recent-body"></tbody>
+        </table>
+      </section>
+    </div>
+
+    <!-- TRANSACTIONS -->
+    <div id="page-transactions" class="page hidden">
+      <div class="page-header">
+        <h2>Transazioni</h2>
+        <button id="open-tx-modal">+ Aggiungi</button>
+      </div>
+
+      <div class="filters">
+        <select id="filter-account"><option value="">Tutti i conti</option></select>
+        <select id="filter-type">
+          <option value="">Tutti i tipi</option>
+          <option value="income">Entrate</option>
+          <option value="expense">Uscite</option>
+        </select>
+      </div>
+
+      <table id="tx-table">
+        <thead><tr><th>Data</th><th>Descrizione</th><th>Categoria</th><th>Conto</th><th>Importo</th></tr></thead>
+        <tbody id="tx-body"></tbody>
+      </table>
+    </div>
+
+    <!-- BUDGETS -->
+    <div id="page-budgets" class="page hidden">
+      <div class="page-header">
+        <h2>Budget</h2>
+        <button id="open-budget-modal">+ Aggiungi</button>
+      </div>
+      <div id="budget-list"></div>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD TRANSACTION -->
+  <div id="tx-modal" class="modal hidden">
+    <div class="modal-box">
+      <h3>Nuova transazione</h3>
+      <form id="tx-form">
+        <select id="tx-account" required></select>
+        <select id="tx-type" required>
+          <option value="income">Entrata</option>
+          <option value="expense">Uscita</option>
+        </select>
+        <input type="number" id="tx-amount" placeholder="Importo" step="0.01" min="0.01" required />
+        <select id="tx-category"><option value="">Nessuna categoria</option></select>
+        <input type="text" id="tx-description" placeholder="Descrizione (opzionale)" />
+        <div class="modal-actions">
+          <button type="button" id="close-tx-modal" class="secondary">Annulla</button>
+          <button type="submit">Salva</button>
+        </div>
+        <p class="error" id="tx-error"></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD BUDGET -->
+  <div id="budget-modal" class="modal hidden">
+    <div class="modal-box">
+      <h3>Nuovo budget</h3>
+      <form id="budget-form">
+        <select id="budget-category" required></select>
+        <input type="number" id="budget-amount" placeholder="Limite mensile (€)" step="0.01" min="0.01" required />
+        <div class="row">
+          <input type="number" id="budget-year" placeholder="Anno" required />
+          <input type="number" id="budget-month" placeholder="Mese (1-12)" min="1" max="12" required />
+        </div>
+        <div class="modal-actions">
+          <button type="button" id="close-budget-modal" class="secondary">Annulla</button>
+          <button type="submit">Salva</button>
+        </div>
+        <p class="error" id="budget-error"></p>
+      </form>
+    </div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

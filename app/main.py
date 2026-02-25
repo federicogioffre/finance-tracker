@@ -1,16 +1,15 @@
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 
-from app.api.routes import accounts, auth, transactions, users
+from app.api.routes import accounts, auth, budgets, transactions, users
 from app.core.config import settings
-from app.db.session import Base, engine
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Create all tables on startup (use Alembic migrations in production)
-    Base.metadata.create_all(bind=engine)
+    # Tables are managed by Alembic — run `alembic upgrade head` before starting.
     yield
 
 
@@ -25,8 +24,13 @@ app.include_router(auth.router)
 app.include_router(users.router)
 app.include_router(accounts.router)
 app.include_router(transactions.router)
+app.include_router(budgets.router)
 
 
 @app.get("/health", tags=["health"])
 def health():
     return {"status": "ok"}
+
+
+# Static mount must come last — it acts as a catch-all
+app.mount("/", StaticFiles(directory="app/static", html=True), name="static")
