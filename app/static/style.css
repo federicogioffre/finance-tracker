@@ -115,6 +115,13 @@ tr:hover td { background: var(--bg); }
 .amount-income { color: var(--income); font-weight: 600; }
 .amount-expense { color: var(--expense); font-weight: 600; }
 
+/* ── DELETE BUTTON ── */
+.btn-delete {
+  background: none; border: none; cursor: pointer; color: var(--muted);
+  font-size: .9rem; padding: .2rem .4rem; border-radius: 4px; line-height: 1;
+}
+.btn-delete:hover { color: var(--expense); background: #fee2e2; }
+
 /* ── FILTERS ── */
 .filters { display: flex; gap: .8rem; margin-bottom: 1rem; }
 .filters select { max-width: 220px; }

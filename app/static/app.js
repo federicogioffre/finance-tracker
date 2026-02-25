@@ -160,9 +160,20 @@ async function renderTransactions() {
           <td>${tx.category_id ? catMap[tx.category_id] || "—" : "—"}</td>
           <td>${accountMap[tx.account_id] || "—"}</td>
           <td class="${amt >= 0 ? "amount-income" : "amount-expense"}">${fmt(Math.abs(amt))}</td>
+          <td><button class="btn-delete" data-id="${tx.id}" title="Elimina">&#x2715;</button></td>
         </tr>`;
       }).join("")
-    : '<tr><td colspan="5" style="color:var(--muted);text-align:center">Nessuna transazione</td></tr>';
+    : '<tr><td colspan="6" style="color:var(--muted);text-align:center">Nessuna transazione</td></tr>';
+
+  tbody.querySelectorAll(".btn-delete").forEach((btn) => {
+    btn.addEventListener("click", () => deleteTransaction(parseInt(btn.dataset.id)));
+  });
+}
+
+async function deleteTransaction(id) {
+  if (!confirm("Eliminare questa transazione?")) return;
+  await api("DELETE", `/transactions/${id}`);
+  await loadTransactions();
 }
 
 // ── Budgets ───────────────────────────────────────────────────────────────────
