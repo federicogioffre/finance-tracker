@@ -1,5 +1,7 @@
 # Finance Tracker
 
+[![CI](https://github.com/federicogioffre/finance-tracker/actions/workflows/ci.yml/badge.svg)](https://github.com/federicogioffre/finance-tracker/actions/workflows/ci.yml)
+
 A personal finance REST API built with **FastAPI**, **SQLAlchemy 2**, and **SQLite**.
 
 ## Features
