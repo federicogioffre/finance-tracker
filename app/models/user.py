@@ -19,9 +19,9 @@ class User(Base):
     )
 
     # Relationships — lazy="dynamic" replaced with select (SQLAlchemy 2.x style)
-    accounts: Mapped[list["Account"]] = relationship(
+    accounts: Mapped[list["Account"]] = relationship(  # noqa: F821
         back_populates="owner", cascade="all, delete-orphan"
-    )  # noqa: F821
-    categories: Mapped[list["Category"]] = relationship(
+    )
+    categories: Mapped[list["Category"]] = relationship(  # noqa: F821
         back_populates="owner", cascade="all, delete-orphan"
-    )  # noqa: F821
+    )
