@@ -1,10 +1,12 @@
 """Integration tests for accounts, transactions, and summary endpoints."""
+
 import pytest  # noqa: F401 — fixtures injected via conftest
 
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
 
 def create_account(client, name="Checking", balance="1000.00"):
     resp = client.post(
@@ -32,6 +34,7 @@ def create_tx(client, account_id, amount, tx_type, description=None):
 # ---------------------------------------------------------------------------
 # Account tests
 # ---------------------------------------------------------------------------
+
 
 def test_create_and_list_account(auth_client):
     acct = create_account(auth_client)
@@ -91,6 +94,7 @@ def test_cannot_access_other_users_account(client, auth_client):
 # ---------------------------------------------------------------------------
 # Transaction CRUD
 # ---------------------------------------------------------------------------
+
 
 def test_create_income_transaction(auth_client):
     acct = create_account(auth_client, balance="0.00")
@@ -178,7 +182,9 @@ def test_cannot_post_to_other_users_account(client, auth_client):
         "/auth/register",
         json={"email": "eve@example.com", "password": "pw", "full_name": "Eve"},
     )
-    resp = client.post("/auth/login", data={"username": "eve@example.com", "password": "pw"})
+    resp = client.post(
+        "/auth/login", data={"username": "eve@example.com", "password": "pw"}
+    )
     eve_token = resp.json()["access_token"]
     resp = client.post(
         "/accounts/",
@@ -190,7 +196,11 @@ def test_cannot_post_to_other_users_account(client, auth_client):
     # auth_client tries to post a transaction to Eve's account
     resp = auth_client.post(
         "/transactions",
-        json={"account_id": eve_acct_id, "amount": "100.00", "transaction_type": "income"},
+        json={
+            "account_id": eve_acct_id,
+            "amount": "100.00",
+            "transaction_type": "income",
+        },
     )
     assert resp.status_code == 403
 
@@ -198,6 +208,7 @@ def test_cannot_post_to_other_users_account(client, auth_client):
 # ---------------------------------------------------------------------------
 # Summary endpoint
 # ---------------------------------------------------------------------------
+
 
 def test_summary_totals(auth_client):
     acct = create_account(auth_client, balance="0.00")
@@ -225,6 +236,7 @@ def test_summary_empty(auth_client):
 # ---------------------------------------------------------------------------
 # Categories
 # ---------------------------------------------------------------------------
+
 
 def test_create_and_list_category(auth_client):
     resp = auth_client.post(

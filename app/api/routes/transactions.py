@@ -24,6 +24,7 @@ router = APIRouter(tags=["transactions"])
 
 # ── Categories ──────────────────────────────────────────────────────────────
 
+
 @router.get("/categories", response_model=list[CategoryRead])
 def list_categories(
     db: Session = Depends(get_db),
@@ -46,6 +47,7 @@ def create_category(
 
 
 # ── Transactions ─────────────────────────────────────────────────────────────
+
 
 def _owned_account_ids(user: User, db: Session) -> list[int]:
     rows = db.query(Account.id).filter(Account.owner_id == user.id).all()
@@ -122,13 +124,17 @@ def get_summary(
     if end_date:
         q = q.filter(Transaction.date <= end_date)
 
-    income = q.filter(Transaction.transaction_type == "income").with_entities(
-        func.coalesce(func.sum(Transaction.amount), 0)
-    ).scalar()
+    income = (
+        q.filter(Transaction.transaction_type == "income")
+        .with_entities(func.coalesce(func.sum(Transaction.amount), 0))
+        .scalar()
+    )
 
-    expenses = q.filter(Transaction.transaction_type == "expense").with_entities(
-        func.coalesce(func.sum(Transaction.amount), 0)
-    ).scalar()
+    expenses = (
+        q.filter(Transaction.transaction_type == "expense")
+        .with_entities(func.coalesce(func.sum(Transaction.amount), 0))
+        .scalar()
+    )
 
     income = Decimal(str(income))
     expenses = Decimal(str(expenses))  # stored as negative

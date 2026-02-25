@@ -1,11 +1,16 @@
 """Integration tests for auth endpoints."""
+
 import pytest  # noqa: F401 — fixtures injected via conftest
 
 
 def test_register_and_login(client):
     resp = client.post(
         "/auth/register",
-        json={"email": "alice@example.com", "password": "secret123", "full_name": "Alice"},
+        json={
+            "email": "alice@example.com",
+            "password": "secret123",
+            "full_name": "Alice",
+        },
     )
     assert resp.status_code == 201
     assert resp.json()["email"] == "alice@example.com"
@@ -28,7 +33,11 @@ def test_duplicate_email(client):
 def test_wrong_password(client):
     client.post(
         "/auth/register",
-        json={"email": "carol@example.com", "password": "correct", "full_name": "Carol"},
+        json={
+            "email": "carol@example.com",
+            "password": "correct",
+            "full_name": "Carol",
+        },
     )
     resp = client.post(
         "/auth/login",

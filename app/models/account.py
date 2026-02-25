@@ -12,10 +12,14 @@ class Account(Base):
     __tablename__ = "accounts"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
-    owner_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=False)
+    owner_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("users.id"), nullable=False
+    )
     name: Mapped[str] = mapped_column(String, nullable=False)
     # ACCOUNT_TYPES: checking | savings | credit | investment | cash
-    account_type: Mapped[str] = mapped_column(String, nullable=False, default="checking")
+    account_type: Mapped[str] = mapped_column(
+        String, nullable=False, default="checking"
+    )
     # Stored as NUMERIC to avoid floating-point rounding errors
     balance: Mapped[float] = mapped_column(Numeric(precision=15, scale=2), default=0.0)
     currency: Mapped[str] = mapped_column(String(3), default="USD")

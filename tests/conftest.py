@@ -1,4 +1,5 @@
 """Shared pytest fixtures for all test modules."""
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
@@ -44,7 +45,11 @@ def auth_client(client):
     """A client pre-loaded with a registered user and Authorization header."""
     client.post(
         "/auth/register",
-        json={"email": "user@example.com", "password": "password123", "full_name": "Test User"},
+        json={
+            "email": "user@example.com",
+            "password": "password123",
+            "full_name": "Test User",
+        },
     )
     resp = client.post(
         "/auth/login",
