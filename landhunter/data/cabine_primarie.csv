@@ -1,0 +1,41 @@
+id,name,latitude,longitude,operator,region,capacity_mva
+CP001,CP Settimo Torinese,45.1350,7.7700,Terna,Piemonte,150
+CP002,CP Chivasso,45.1870,7.8870,Terna,Piemonte,120
+CP003,CP Leinì,45.1800,7.7100,Enel,Piemonte,80
+CP004,CP Borgaro Torinese,45.1520,7.6540,Enel,Piemonte,100
+CP005,CP Volpiano,45.2000,7.7730,Terna,Piemonte,90
+CP006,CP Brandizzo,45.1750,7.8400,Enel,Piemonte,60
+CP007,CP Caselle Torinese,45.1780,7.6560,Terna,Piemonte,110
+CP008,CP San Mauro Torinese,45.1060,7.7670,Enel,Piemonte,70
+CP009,CP Gassino Torinese,45.1270,7.8220,Enel,Piemonte,50
+CP010,CP Torino Nord,45.0950,7.6800,Terna,Piemonte,200
+CP011,CP Moncalieri,44.9980,7.6920,Terna,Piemonte,180
+CP012,CP Nichelino,44.9820,7.6490,Enel,Piemonte,90
+CP013,CP Rivoli,45.0710,7.5150,Terna,Piemonte,130
+CP014,CP Collegno,45.0770,7.5700,Enel,Piemonte,100
+CP015,CP Grugliasco,45.0650,7.5770,Enel,Piemonte,80
+CP016,CP Novara Est,45.4530,8.6350,Terna,Piemonte,160
+CP017,CP Novara Ovest,45.4420,8.5800,Enel,Piemonte,120
+CP018,CP Borgomanero,45.6880,8.4620,Enel,Piemonte,70
+CP019,CP Trecate,45.4310,8.7370,Terna,Piemonte,90
+CP020,CP Alessandria,44.9120,8.6150,Terna,Piemonte,150
+CP021,CP Tortona,44.8940,8.8630,Terna,Piemonte,100
+CP022,CP Casale Monferrato,45.1340,8.4530,Enel,Piemonte,80
+CP023,CP Valenza,45.0140,8.6420,Enel,Piemonte,60
+CP024,CP Asti,44.9010,8.2060,Terna,Piemonte,120
+CP025,CP Nizza Monferrato,44.7730,8.3560,Enel,Piemonte,50
+CP026,CP Vercelli,45.3220,8.4180,Terna,Piemonte,130
+CP027,CP Biella,45.5630,8.0510,Terna,Piemonte,100
+CP028,CP Mongrando,45.5156,8.0075,Enel,Piemonte,60
+CP029,CP Cossato,45.5710,8.1820,Enel,Piemonte,50
+CP030,CP Cuneo,44.3830,7.5430,Terna,Piemonte,140
+CP031,CP Fossano,44.5530,7.7230,Enel,Piemonte,80
+CP032,CP Saluzzo,44.6440,7.4880,Enel,Piemonte,60
+CP033,CP Alba,44.6910,8.0340,Terna,Piemonte,90
+CP034,CP Bra,44.7000,7.8510,Enel,Piemonte,70
+CP035,CP Mondovì,44.3900,7.8220,Enel,Piemonte,60
+CP036,CP Verbania,45.9220,8.5530,Terna,Piemonte,80
+CP037,CP Domodossola,46.1170,8.2920,Terna,Piemonte,70
+CP038,CP Ivrea,45.4610,7.8740,Terna,Piemonte,100
+CP039,CP Rivarolo Canavese,45.3320,7.7200,Enel,Piemonte,60
+CP040,CP Carmagnola,44.8500,7.7170,Enel,Piemonte,80

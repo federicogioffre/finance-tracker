@@ -1,0 +1,16 @@
+area_code,comune,provincia,region,status,max_power_kw,notes
+AC001E01322,Mongrando,BI,Piemonte,active,200,Area test autoconsumo diffuso
+AC001E01345,Cossato,BI,Piemonte,active,200,CER attiva dal 2024
+AC001E02110,Settimo Torinese,TO,Piemonte,active,500,CER industriale
+AC001E02115,Chivasso,TO,Piemonte,pending,300,In fase di attivazione
+AC001E02120,Volpiano,TO,Piemonte,active,200,CER residenziale-industriale
+AC001E03210,Tortona,AL,Piemonte,active,400,Area logistica CER
+AC001E03215,Casale Monferrato,AL,Piemonte,active,300,CER centro storico
+AC001E04110,Novara,NO,Piemonte,active,600,CER urbana
+AC001E04115,Trecate,NO,Piemonte,pending,200,In valutazione
+AC001E05110,Vercelli,VC,Piemonte,active,300,CER agricola
+AC001E06110,Cuneo,CN,Piemonte,active,400,CER mista
+AC001E06115,Fossano,CN,Piemonte,pending,200,In fase di progettazione
+AC001E07110,Asti,AT,Piemonte,active,300,CER vitivinicola
+AC001E08110,Ivrea,TO,Piemonte,active,250,CER olivettiana
+AC001E09110,Verbania,VB,Piemonte,active,200,CER lacustre

@@ -1,0 +1,19 @@
+# LandHunter - Dipendenze
+# Scraping
+playwright>=1.40.0
+
+# HTTP client
+httpx>=0.25.0
+
+# GIS
+geopandas>=0.14.0
+shapely>=2.0.0
+pyproj>=3.6.0
+
+# Database
+# SQLite incluso in Python stdlib
+# SpatiaLite opzionale (installare mod_spatialite nel sistema)
+
+# Utilita'
+pandas>=2.1.0
+python-dotenv>=1.0.0
