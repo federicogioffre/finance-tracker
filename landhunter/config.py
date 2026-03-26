@@ -7,8 +7,20 @@ import os
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from dotenv import load_dotenv
+
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
+
+# Carica .env dalla root del progetto LandHunter o dalla root del repo
+_env_paths = [
+    BASE_DIR / ".env",
+    BASE_DIR.parent / ".env",
+]
+for _p in _env_paths:
+    if _p.exists():
+        load_dotenv(_p)
+        break
 
 
 @dataclass
